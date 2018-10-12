@@ -73,3 +73,14 @@ python3 xml_to_csv.py
   python3 generate_tfrecord.py --csv_input=data/test_labels.csv --output_path=data/test.record
   ```
   Now, in your data directory, you should have train.record and test.record.
+
+10. Download pre-trained models and configuration files from tensorflow, and put then in /models/research/object_detection/legacy folder like this:
+   ```
+   cd ~/models/research/object_detection/legacy
+   mkdir training
+   cd training
+   wget https://raw.githubusercontent.com/tensorflow/models/master/research/object_detection/samples/configs/ssd_mobilenet_v1_pets.config
+   cd ..
+   wget http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_11_06_2017.tar.gz
+   tar xvzf ssd_mobilenet_v1_coco_11_06_2017.tar.gz
+   ```
