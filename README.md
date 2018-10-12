@@ -1,4 +1,4 @@
-#### Steps to create a custom object detection model from tensorflow legacy
+#### Steps to create a custom object detection model from tensorflow legacy for ubuntu 18.04
 ##### Special thanks to Harrison from pythonprogramming.net, this files are just a merge from all his tutorial, check out in https://pythonprogramming.net
 <br>
 
