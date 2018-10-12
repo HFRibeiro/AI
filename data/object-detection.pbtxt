@@ -1,0 +1,8 @@
+item {
+    id: 1
+    name: 'lable1'
+}
+item {
+    id: 2
+    name: 'lable2'
+}

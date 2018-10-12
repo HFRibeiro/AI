@@ -1,4 +1,3 @@
-# AI
 #### Steps to create a custom object detection model from tensorflow legacy
 ##### Special thanks to Harrison from pythonprogramming.net, this files are just a merge from all his tutorial, check out in https://pythonprogramming.net
 <br>
@@ -76,11 +75,77 @@ python3 xml_to_csv.py
 
 10. Download pre-trained models and configuration files from tensorflow, and put then in /models/research/object_detection/legacy folder like this:
    ```
-   cd ~/models/research/object_detection/legacy
-   mkdir training
-   cd training
-   wget https://raw.githubusercontent.com/tensorflow/models/master/research/object_detection/samples/configs/ssd_mobilenet_v1_pets.config
+   cp -R ~/AI/training  ~/models/research/object_detection/legacy/training
+   wget https://raw.githubusercontent.com/SirRibeiro/AI/master/ssd_mobilenet_v1_pets.config
    cd ..
    wget http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_11_06_2017.tar.gz
    tar xvzf ssd_mobilenet_v1_coco_11_06_2017.tar.gz
+   cp -R ~/AI/data  ~/models/research/object_detection/legacy/data
+   cp -R ~/AI/images  ~/models/research/object_detection/legacy/images
    ```
+#### Note in the 'ssd_mobilenet_v1_pets.config' wich is inside ~/models/research/object_detection/legacy/training have some importante things, the:
+  ```
+  num_classes: 1
+  ```
+#### Wich defines the number of classes that you selected and the:
+  ```
+  batch_size: 12
+  ```
+#### Wich is the batch size, if you get memory errors change this to a lower number, also keep in mind that the default config from tensorflow does not have our paths like:
+  ```
+  fine_tune_checkpoint: "ssd_mobilenet_v1_coco_11_06_2017/model.ckpt"
+  input_path: "data/train.record"
+  label_map_path: "data/object-detection.pbtxt"
+  input_path: "data/test.record"
+  label_map_path: "data/object-detection.pbtxt"
+  ```
+#### We have also copy training, data and images to tensorflow models, inside data we have the object-detection.pbtxt, which contains:
+  ```
+  item {
+      id: 1
+      name: 'lable1'
+  }
+  item {
+      id: 2
+      name: 'lable2'
+  }
+  ```
+11. Starting the actual training
+```
+cd ~/models/research/object_detection/legacy/
+python3 train.py --logtostderr --train_dir=training/ --pipeline_config_path=training/ssd_mobilenet_v1_pets.config
+```
+#### You should see something like:
+  ```
+  INFO:tensorflow:global step 11788: loss = 0.6717 (0.398 sec/step)
+  INFO:tensorflow:global step 11789: loss = 0.5310 (0.436 sec/step)
+  INFO:tensorflow:global step 11790: loss = 0.6614 (0.405 sec/step)
+  INFO:tensorflow:global step 11791: loss = 0.7758 (0.460 sec/step)
+  INFO:tensorflow:global step 11792: loss = 0.7164 (0.378 sec/step)
+  INFO:tensorflow:global step 11793: loss = 0.8096 (0.393 sec/step)
+  ```
+#### To check progress use:
+  ```
+  cd ~/models/research/object_detection/legacy/
+  tensorboard --logdir='training'
+  ```
+#### Wich runs on http://127.0.0.1:6006 (visit in your browser)
+
+12. Next we need to export the inference graph, we will use the export_inference_graph.py from models/research/object_detection/ but to keep everything together we will copy it to legacy, note that the XYYYYX, is the number of steps that your training as done, normaly around 12000 are enough
+
+  ```
+  cp ~/models/research/object_detection/export_inference_graph.py ~/models/research/object_detection/legacy/export_inference_graph.py
+
+  python3 export_inference_graph.py \
+      --input_type image_tensor \
+      --pipeline_config_path training/ssd_mobilenet_v1_pets.config \
+      --trained_checkpoint_prefix training/model.ckpt-XYYYYX \
+      --output_directory mac_n_cheese_inference_graph
+  ```
+13. Final step, check if you can really detect something, for this I use a personal modified version of jupyter object_detection_tutorial.ipynb, wich is object_detection_tutorial.py to use this run:
+  ```
+  cd ~/models/research/object_detection/legacy/
+  mkdir results
+  python3 object_dection_tutorial.py
+  ```
+#### This will check your test_images folder inside the legacy folder from 1 to 57, like image1.jpg,image2.jpg...image57.jpg and will save the results to the results folder
