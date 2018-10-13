@@ -146,6 +146,6 @@ python3 train.py --logtostderr --train_dir=training/ --pipeline_config_path=trai
   ```
   cd ~/models/research/object_detection/legacy/
   mkdir results
-  python3 object_dection_tutorial.py
+  python3 object_detection_tutorial.py
   ```
 #### This will check your test_images folder inside the legacy folder from 1 to 57, like image1.jpg,image2.jpg...image57.jpg and will save the results to the results folder
